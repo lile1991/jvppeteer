@@ -107,7 +107,7 @@ public class ElementHandle extends JSHandle {
 
     }
 
-    private ClickablePoint clickablePoint() {
+    public ClickablePoint clickablePoint() {
         Map<String, Object> params = new HashMap<>();
         params.put("objectId", this.remoteObject.getObjectId());
         JsonNode result = this.client.send("DOM.getContentQuads", params, true);

@@ -156,7 +156,7 @@ public class JSHandle {
         this.disposed = disposed;
     }
 
-    protected RemoteObject getRemoteObject() {
+    public RemoteObject getRemoteObject() {
         return remoteObject;
     }
 }
