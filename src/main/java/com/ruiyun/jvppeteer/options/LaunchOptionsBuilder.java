@@ -1,6 +1,7 @@
 package com.ruiyun.jvppeteer.options;
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.ruiyun.jvppeteer.core.Environment;
 
@@ -106,7 +107,17 @@ public class LaunchOptionsBuilder {
 		options.setDevtools(devtools);
 		return this;
 	}
-	
+
+	public LaunchOptionsBuilder withRegisterShutdownHook(boolean registerShutdownHook) {
+		this.options.setRegisterShutdownHook(registerShutdownHook);
+		return this;
+	}
+
+	public LaunchOptionsBuilder withExecDelegate(Function<List<String>, Process> execDelegate) {
+		this.options.setExecDelegate(execDelegate);
+		return this;
+	}
+
 	public LaunchOptions build() {
 		return options;
 	}

@@ -2,6 +2,7 @@ package com.ruiyun.jvppeteer.options;
 
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.ruiyun.jvppeteer.core.Environment;
 
@@ -76,6 +77,9 @@ public class LaunchOptions extends BrowserOptions {
 	 * chrome or firefox
 	 */
 	private String product;
+
+	private Function<List<String>, Process> execDelegate;
+	private boolean registerShutdownHook = true;
 
 
 	public String getExecutablePath() {
@@ -159,6 +163,21 @@ public class LaunchOptions extends BrowserOptions {
 	public void setProduct(String product) {
 		this.product = product;
 	}
-	 
-	 
+
+
+	public boolean isRegisterShutdownHook() {
+		return this.registerShutdownHook;
+	}
+
+	public void setRegisterShutdownHook(boolean registerShutdownHook) {
+		this.registerShutdownHook = registerShutdownHook;
+	}
+
+	public Function<List<String>, Process> getExecDelegate() {
+		return this.execDelegate;
+	}
+
+	public void setExecDelegate(Function<List<String>, Process> execDelegate) {
+		this.execDelegate = execDelegate;
+	}
 }

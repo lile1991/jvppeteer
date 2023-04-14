@@ -74,12 +74,19 @@ public class BrowserRunner extends EventEmitter implements AutoCloseable {
         arguments.add(executablePath);
         arguments.addAll(processArguments);
 
+        if (options.getExecDelegate() != null) {
+            process = options.getExecDelegate().apply(arguments);
+        } else {
+            ProcessBuilder processBuilder = new ProcessBuilder().command(arguments).redirectErrorStream(true);
+            process = processBuilder.start();
+            this.closed = false;
+        }
 
-        ProcessBuilder processBuilder = new ProcessBuilder().command(arguments).redirectErrorStream(true);
-        process = processBuilder.start();
-        this.closed = false;
 
-        registerHook();
+        // registerHook();
+        if (options.isRegisterShutdownHook()) {
+            registerHook();
+        }
 
         addProcessListener(options);
 
