@@ -7,8 +7,8 @@ public enum BrowserEnum {
     CHROME("Chrome", "Chrome", "Chrome.png"),
     MULTILOGIN("Multilogin", "Multilogin", "Mimic.png"),
     CHROMIUM("Chromium", "Chromium", "Chromium.png"),
-    MULTILOGIN2("Multilogin2", "Mimic7", "Mimic.png"),
-    MULTILOGIN80("Multilogin80", "Mimic8", "Mimic2.png");
+    MIMIC77("Multilogin2", "Mimic77", "Mimic77.png"),
+    MIMIC80("Multilogin80", "Mimic80", "Mimic80.png");
 
     public final String browserName;
     public final String aliasName;
