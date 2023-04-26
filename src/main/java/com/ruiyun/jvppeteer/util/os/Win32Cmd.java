@@ -290,7 +290,7 @@ public class Win32Cmd implements OSCommand {
                     allProcessIds.addAll(processIds);
                 }
 
-                log.info("Kill 【{}】所有关联线程: {}", queryStr, processIds);
+                log.debug("Kill 【{}】所有关联线程: {}", queryStr, processIds);
                 for (Integer processId : allProcessIds) {
                     killPIDs(processId);
                 }

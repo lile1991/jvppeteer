@@ -149,7 +149,7 @@ public class MultipleBrowser extends IDomFind {
         // }
         int curSecond = TimeUtils.getCurSecond();
         Browser browser = Puppeteer.connect(options, wsEndpoint, browserURL, null);
-        log.info("连接浏览器 {} 成功， 耗时{}s", ConvertUtils.defaultValue(wsEndpoint, browserURL), TimeUtils.getSecondDiff(curSecond));
+        log.debug("连接浏览器 {} 成功， 耗时{}s", ConvertUtils.defaultValue(wsEndpoint, browserURL), TimeUtils.getSecondDiff(curSecond));
         return browser;
     }
 
@@ -161,10 +161,10 @@ public class MultipleBrowser extends IDomFind {
 
     public synchronized boolean reconnect(String processQueryStr) {
         if(isClosed) {
-            log.info("浏览器已关闭， 不尝试重连");
+            log.debug("浏览器已关闭， 不尝试重连");
             return false;
         }
-        log.info("尝试重连");
+        log.debug("尝试重连");
 
         // 浏览器进程还在
         List<Integer> processIds = OS.command().findProcessIds(processQueryStr);
@@ -173,9 +173,9 @@ public class MultipleBrowser extends IDomFind {
             processIds = OS.command().findProcessIds(processQueryStr);
 
             if(processIds != null && processIds.size() > 1) {
-                log.info("浏览器进程还在.. 继续观察...{}", i + 1);
+                log.debug("浏览器进程还在.. 继续观察...{}", i + 1);
             } else {
-                log.info("浏览器进程 {} 不在了..{}, 直接重连失败", processQueryStr, i + 1);
+                log.debug("浏览器进程 {} 不在了..{}, 直接重连失败", processQueryStr, i + 1);
                 isProcessExist = true;
                 return false;
             }
@@ -183,7 +183,7 @@ public class MultipleBrowser extends IDomFind {
 
         boolean isConnected = false;
         while(!isClosed && processIds != null && processIds.size() > 1) {
-            log.info("已与浏览器断开连接, 上下文却还没关闭，进程 {} 也还在 重连试试", processIds);
+            log.debug("已与浏览器断开连接, 上下文却还没关闭，进程 {} 也还在 重连试试", processIds);
             if(reconnect(10)) {
                 isConnected = true;
                 break;
@@ -193,7 +193,7 @@ public class MultipleBrowser extends IDomFind {
         }
 
         if(!isConnected) {
-            log.info("浏览器重连失败， 进程只剩 {} ！ 关闭浏览器", processIds);
+            log.debug("浏览器重连失败， 进程只剩 {} ！ 关闭浏览器", processIds);
             close();
         }
 
@@ -202,12 +202,12 @@ public class MultipleBrowser extends IDomFind {
 
     public synchronized boolean reconnect(int timeout) {
         if(isConnected()) {
-            log.info("当前浏览器已经是Connected状态");
+            log.debug("当前浏览器已经是Connected状态");
             return true;
         }
 
         if (isClosed) {
-            log.info("浏览器已关闭， 放弃重连");
+            log.debug("浏览器已关闭， 放弃重连");
             return false;
         }
 
@@ -223,7 +223,7 @@ public class MultipleBrowser extends IDomFind {
             );
             // 重新赋值
             this.browser = browser;
-            log.info("浏览器重连成功");
+            log.debug("浏览器重连成功");
             return true;
         } catch (Exception e) {
             log.error("重连浏览器失败", e);
@@ -349,16 +349,16 @@ public class MultipleBrowser extends IDomFind {
             "    }");
         }
         /*page.onPageerror(dialog-> {
-            log.info("onPageerror{}", dialog);
+            log.debug("onPageerror{}", dialog);
         });
         page.onMetrics(dialog-> {
-            log.info("onMetrics{}", dialog);
+            log.debug("onMetrics{}", dialog);
         });
         page.onPopup(dialog-> {
-            log.info("onPopup{}", dialog);
+            log.debug("onPopup{}", dialog);
         });
         page.onDialg(dialog -> {
-            log.info("onDialg{}", dialog);
+            log.debug("onDialg{}", dialog);
             dialog.dismiss();
         });*/
         return curPage;
@@ -392,19 +392,19 @@ public class MultipleBrowser extends IDomFind {
      */
     public synchronized int close() {
         if(isClosed) {
-            log.info("浏览器已关闭");
+            log.debug("浏览器已关闭");
             return 0;
         }
         isClosed = true;
 
         int start = TimeUtils.getCurSecond();
-        log.info("开始关闭浏览器: {}", browser);
+        log.debug("开始关闭浏览器: {}", browser);
         // 关闭浏览器
         try {
             if(browser != null) {
                 browser.close();
             }
-            log.info("关闭浏览器 {} 成功", browser);
+            log.debug("关闭浏览器 {} 成功", browser);
         } catch (Exception e) {
             log.warn("关闭浏览器 " + browser + " 异常， 耗时" + TimeUtils.getSecondDiff(start) + "s, 请注意手动释放进程: {}", e.getMessage());
         }
@@ -423,12 +423,12 @@ public class MultipleBrowser extends IDomFind {
         for(int i = 0; i < timeout; i ++) {
             DomElement domElement = supplier.get();
             if(domElement == null) {
-                log.info("点击元素失败， 未取到元素");
+                log.debug("点击元素失败， 未取到元素");
                 break;
             }
 
             if(domElement.click() || domElement.clickParent(clickParent)) {
-                log.info("点击元素成功");
+                log.debug("点击元素成功");
                 return true;
             } else {
                 int consumerTime = TimeUtils.getSecondDiff(start);
@@ -436,7 +436,7 @@ public class MultipleBrowser extends IDomFind {
                     log.debug("点击元素异常， 重试, 已消耗时间: {}s, 超时时间{}s", consumerTime, timeout);
                     ThreadUtils.sleep(1000);
                 } else {
-                    log.info("点击元素超时, 总耗时{}s", consumerTime);
+                    log.debug("点击元素超时, 总耗时{}s", consumerTime);
                     break;
                 }
             }
@@ -500,10 +500,10 @@ public class MultipleBrowser extends IDomFind {
             }
             return null;
         } catch (NavigateException e) {
-            log.info("导航到【" + url + "】异常", e);
+            log.debug("导航到【" + url + "】异常", e);
             throw e;
         } catch (Exception e) {
-            log.info("打开URL【" + url + "】异常", e);
+            log.debug("打开URL【" + url + "】异常", e);
             return null;
         }
     }
@@ -513,7 +513,7 @@ public class MultipleBrowser extends IDomFind {
         try {
             return goTo(url, 100);
         } catch (Exception e) {
-            log.info("打开URL【" + url + "】异常", e);
+            log.debug("打开URL【" + url + "】异常", e);
             // throw e;
             return null;
         }
@@ -650,9 +650,9 @@ public class MultipleBrowser extends IDomFind {
     public int scrollIntoLast() {
         Integer offsetHeightBefore = null;
         for(int i = 0, curScone = TimeUtils.getCurSecond(); TimeUtils.getCurSecond() - curScone < 6; i ++) {
-            log.info("开始做下拉动作 scrollIntoLast");
+            log.debug("开始做下拉动作 scrollIntoLast");
             offsetHeightBefore = (Integer) evaluate("document.body.offsetHeight");
-            log.info("当前页面高度: {}", offsetHeightBefore);
+            log.debug("当前页面高度: {}", offsetHeightBefore);
             if (offsetHeightBefore == null) {
                 if(i < 3) {
                     log.warn("第{}次取页面高度失败， 重试", i + 1);
@@ -672,22 +672,22 @@ public class MultipleBrowser extends IDomFind {
     private int isOffsetHeightChange(Integer offsetHeightBefore) {
         for (int i = 0, curSecond = TimeUtils.getCurSecond(); i < 10 && TimeUtils.getCurSecond() - curSecond < 15; i++) {
             if (i % 3 == 0) {
-                log.info("第 {} 次拉到底", i);
+                log.debug("第 {} 次拉到底", i);
             }
             evaluate("window.scrollTo(0, document.body.offsetHeight)");
             ThreadUtils.sleep(1000);
             // 等待下拉框变化
             Object offsetHeight = evaluate("document.body.offsetHeight");
             if (offsetHeight == null) {
-                log.info("获取页面高度为空, 可能页面已经Crash");
+                log.debug("获取页面高度为空, 可能页面已经Crash");
                 return -2;
             }
             Integer offsetHeightAfter = (Integer) offsetHeight;
             if (offsetHeightAfter > offsetHeightBefore) {
-                log.info("页面高度由{} 变为 {}， 拿数据去咯， 果果嗒！！", offsetHeightBefore, offsetHeightAfter);
+                log.debug("页面高度由{} 变为 {}， 拿数据去咯， 果果嗒！！", offsetHeightBefore, offsetHeightAfter);
                 return 1;
             }
-            log.info("页面高度没有变化, 下拉前高度: {}, 当前高度: {}， 继续等 {}", offsetHeightBefore, offsetHeight, i + 1);
+            log.debug("页面高度没有变化, 下拉前高度: {}, 当前高度: {}， 继续等 {}", offsetHeightBefore, offsetHeight, i + 1);
         }
         return 0;
     }
@@ -734,7 +734,7 @@ public class MultipleBrowser extends IDomFind {
             fileChooser.accept(Arrays.asList(filePaths));
             return true;
         } catch (Exception e) {
-            log.info("选择文件失败");
+            log.debug("选择文件失败");
             return false;
         }
     }
@@ -871,7 +871,7 @@ public class MultipleBrowser extends IDomFind {
             params.put("windowId", windowId);
             params.put("bounds", bounds);
             JsonNode jsonNode = connection.send("Browser.setWindowBounds", params, isWait);
-            log.info("WS调整窗口{}大小为{}: {}", windowId, bounds, jsonNode);
+            log.debug("WS调整窗口{}大小为{}: {}", windowId, bounds, jsonNode);
         } catch (HeadlessException e) {
             log.error("修改窗口大小异常", e);
         }
