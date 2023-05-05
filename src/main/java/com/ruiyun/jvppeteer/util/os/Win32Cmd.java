@@ -38,12 +38,12 @@ public class Win32Cmd implements OSCommand {
             return;
         }
         try {
-            log.info("Kill 进程PID: " + pid);
+            log.debug("Kill PID: " + pid);
             Process process = Runtime.getRuntime().exec("taskkill /f /PID " + pid);
             process.waitFor(15, TimeUnit.SECONDS);
             echo(process);
         } catch (Exception e) {
-            log.error("杀掉进程PID" + pid + "异常", e);
+            log.error("Kill PID " + pid + " ERROR", e);
         }
     }
 
@@ -53,12 +53,12 @@ public class Win32Cmd implements OSCommand {
             return;
         }
         try {
-            log.info("Kill 进程PIDs: " + pid);
+            log.debug("Kill PIDs: " + pid);
             Process process = Runtime.getRuntime().exec("taskkill /f /t /PID " + pid);
             process.waitFor(15, TimeUnit.SECONDS);
             echo(process);
         } catch (Exception e) {
-            log.error("杀掉进程PID" + pid + "异常", e);
+            log.error("Kill PID " + pid + " ERROR", e);
         }
     }
 
@@ -158,7 +158,7 @@ public class Win32Cmd implements OSCommand {
                         continue;
                     }
 
-                    log.info("发现端口【{}】占用信息: {}", port, line);
+                    log.debug("发现端口【{}】占用信息: {}", port, line);
                     line = line.substring(ipIdex);
                     line = line.substring(line.indexOf(":") + 1);
 
@@ -166,16 +166,16 @@ public class Win32Cmd implements OSCommand {
                     String occupyPort = split[0];
                     if(occupyPort.equals(String.valueOf(port))) {
                         String pid = split[split.length - 1];
-                        log.info("找到占用端口进程PID: {}", pid);
+                        log.debug("找到占用端口进程PID: {}", pid);
                         if(ignorePIDList.contains(pid)) {
-                            log.info("纳尼！ PID【{}】在忽略名单中: {}", pid, ignorePIDList);
+                            log.debug("纳尼！ PID【{}】在忽略名单中: {}", pid, ignorePIDList);
                         } else {
                             killPIDs(pid);
                             isRelease = true;
-                            log.info("成功释放端口【{}】", port);
+                            log.debug("成功释放端口【{}】", port);
                         }
                     } else {
-                        log.info("哦豁！ 端口【{}】实际没被占用", port);
+                        log.debug("哦豁！ 端口【{}】实际没被占用", port);
                     }
                 } catch (Exception e) {
                     log.warn("释放端口【" + port + "】【" + line + "】异常", e);
@@ -211,7 +211,7 @@ public class Win32Cmd implements OSCommand {
                 }
                 // String pid = "";
                 // Runtime.getRuntime().exec("taskkill /PID " + pid);
-                log.info("login ml successful...");
+                log.debug("login ml successful...");
             }
         }
         return null;
@@ -225,7 +225,7 @@ public class Win32Cmd implements OSCommand {
     public void killChromeDriver() {
         try {
             String cmd = "taskkill /f /t /im chromedriver.exe";
-            log.info("kill chromedriver.exe进程: {}", cmd);
+            log.debug("kill chromedriver.exe进程: {}", cmd);
             Process process = Runtime.getRuntime().exec(cmd);
             process.waitFor(15, TimeUnit.SECONDS);
             echo(process);
@@ -235,11 +235,11 @@ public class Win32Cmd implements OSCommand {
     }
 
     public void echo(Process process) {
-        // log.info("echo...");
+        // log.debug("echo...");
         try {
             InputStream inputStream = process.getInputStream();
             if(inputStream.available() > 0) {
-                log.info(IOUtils.toString(inputStream, ENCODING));
+                log.debug(IOUtils.toString(inputStream, ENCODING));
             }
             InputStream errorStream = process.getErrorStream();
             if(errorStream.available() > 0) {
@@ -258,7 +258,7 @@ public class Win32Cmd implements OSCommand {
     public void killChrome() {
         try {
             String cmd = "taskkill /f /t /im chrome.exe";
-            log.info("kill chrome.exe进程: {}", cmd);
+            log.debug("kill chrome.exe进程: {}", cmd);
             Process process = Runtime.getRuntime().exec(cmd);
             process.waitFor(15, TimeUnit.SECONDS);
             echo(process);
@@ -272,7 +272,7 @@ public class Win32Cmd implements OSCommand {
         try {
             String cmd = "taskkill /f /t /im multilogin.exe";
             Process process = Runtime.getRuntime().exec(cmd);
-            log.info("kill AdsBrowser.exe进程: {}", cmd);
+            log.debug("kill AdsBrowser.exe进程: {}", cmd);
             process.waitFor(15, TimeUnit.SECONDS);
             echo(process);
         } catch (Exception e) {
@@ -322,7 +322,7 @@ public class Win32Cmd implements OSCommand {
             InputStream inputStream = process.getInputStream();
             if(inputStream.available() > 0) {
                 String sids = IOUtils.toString(inputStream, ENCODING);
-                log.info("查到 {} 的进程ID： {}", queryStr, sids);
+                log.debug("查到 {} 的进程ID： {}", queryStr, sids);
                 return Arrays.stream(sids.split("\\s+"))
                         .filter(pid -> !"ProcessId".equalsIgnoreCase(pid))
                         .map(ConvertUtils::toInteger)
@@ -338,7 +338,7 @@ public class Win32Cmd implements OSCommand {
     @Override
     public List<ProcessInfo> findProcessByName(String name) {
         try {
-            log.info("查找 {} 进程信息", name);
+            log.debug("查找 {} 进程信息", name);
             Process process = Runtime.getRuntime().exec("wmic process where Name=\"{name}\" get CreationDate, ProcessId".replace("{name}", name));
             process.waitFor(15, TimeUnit.SECONDS);
             InputStream inputStream = process.getInputStream();
@@ -382,7 +382,7 @@ public class Win32Cmd implements OSCommand {
     @Override
     public List<String> findProcess(String queryStr) {
         try {
-            log.info("查找 {} 的相关进程", queryStr);
+            log.debug("查找 {} 的相关进程", queryStr);
             Process process = Runtime.getRuntime().exec("wmic process where \"commandline like '%" + queryStr + "%'\" get ProcessId,caption,commandline");
             process.waitFor(15, TimeUnit.SECONDS);
             InputStream inputStream = process.getInputStream();
@@ -406,7 +406,7 @@ public class Win32Cmd implements OSCommand {
         try {
             Process process = Runtime.getRuntime().exec(cmd);
             String response = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
-            log.info("绑定911端口-> {}: {}", cmd, response);
+            log.debug("绑定911端口-> {}: {}", cmd, response);
             return response;
         } catch (IOException e) {
             log.error(cmd + " 执行异常", e);
