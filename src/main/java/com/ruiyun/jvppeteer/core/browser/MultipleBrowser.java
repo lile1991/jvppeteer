@@ -8,7 +8,6 @@ import com.ruiyun.jvppeteer.core.page.*;
 import com.ruiyun.jvppeteer.dom.DomElement;
 import com.ruiyun.jvppeteer.dom.DomFrame;
 import com.ruiyun.jvppeteer.dom.IDomFind;
-import com.ruiyun.jvppeteer.enums.BrowserTypeEnum;
 import com.ruiyun.jvppeteer.enums.BrowserLanguageEnum;
 import com.ruiyun.jvppeteer.enums.DomMatchMode;
 import com.ruiyun.jvppeteer.events.EventHandler;
@@ -42,8 +41,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MultipleBrowser extends IDomFind {
-    /** 浏览器类型 */
-    public final BrowserTypeEnum browserTypeEnum;
     /** jvppeteer驱动类 */
     @Setter
     public Browser browser;
@@ -379,9 +376,8 @@ public class MultipleBrowser extends IDomFind {
     	return null;
     }
 
-    public MultipleBrowser(String id, BrowserTypeEnum browserTypeEnum, Browser browser) {
+    public MultipleBrowser(String id, Browser browser) {
         this.id = id;
-        this.browserTypeEnum = browserTypeEnum;
         this.browser = browser;
         this.launchTime = new Date();
     }
