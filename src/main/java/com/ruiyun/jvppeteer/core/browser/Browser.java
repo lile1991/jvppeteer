@@ -270,6 +270,12 @@ public class Browser extends EventEmitter {
                 return target;
             }
         }
+        // 兼容Chrome新版浏览器
+        for (Target target : this.targets()) {
+            if ("page".equals(target.type())) {
+                return target;
+            }
+        }
         return null;
     }
 
