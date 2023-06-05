@@ -20,6 +20,8 @@ import com.ruiyun.jvppeteer.transport.Connection;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import com.ruiyun.jvppeteer.util.ValidateUtil;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -163,6 +165,15 @@ public class Browser extends EventEmitter {
 
     public String wsEndpoint() {
         return this.connection.url();
+    }
+
+    public int remoteDebuggingPort() {
+        String wsEndpoint = wsEndpoint();
+        try {
+            return new java.net.URI(wsEndpoint).getPort();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Get remoteDebuggingPort error!", e);
+        }
     }
 
     /**
