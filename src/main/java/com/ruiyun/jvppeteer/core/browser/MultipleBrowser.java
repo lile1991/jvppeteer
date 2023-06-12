@@ -386,6 +386,12 @@ public class MultipleBrowser extends IDomFind {
      * 关闭浏览器
      */
     public synchronized int close() {
+        try {
+            // 杀进程
+            OS.command().killByQueryStr(id);
+        } catch (Throwable ignore) {
+        }
+
         if(isClosed) {
             log.debug("浏览器已关闭");
             return 0;
@@ -402,12 +408,6 @@ public class MultipleBrowser extends IDomFind {
             log.debug("关闭浏览器 {} 成功", browser);
         } catch (Exception e) {
             log.warn("关闭浏览器 " + browser + " 异常， 耗时" + TimeUtils.getSecondDiff(start) + "s, 请注意手动释放进程: {}", e.getMessage());
-        }
-
-        try {
-            // 杀进程
-            OS.command().killByQueryStr(id);
-        } catch (Throwable ignore) {
         }
         return 1;
     }
