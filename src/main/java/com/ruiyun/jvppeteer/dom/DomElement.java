@@ -326,6 +326,18 @@ public class DomElement extends IDomFind {
             return "";
         }
     }
+    public String text(String text) {
+        multipleBrowser.checkBrowserStatus();
+        try {
+            if(frame != null) {
+                return (String) frame.evaluate("el => el.innerText = '" + text + "'", Collections.singletonList(elementHandle));
+            }
+            return (String) page.evaluate("el => el.innerText = '" + text + "'", Collections.singletonList(elementHandle));
+        } catch (Exception e) {
+            log.error("获取元素文本异常", e);
+            return "";
+        }
+    }
     public String outerText() {
         multipleBrowser.checkBrowserStatus();
         try {
