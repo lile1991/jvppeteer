@@ -382,6 +382,10 @@ public class MultipleBrowser extends IDomFind {
         this.launchTime = new Date();
     }
 
+    public List<Integer> progressIds() {
+        return OS.command().findProcessIds(getId());
+    }
+
     /**
      * 关闭浏览器
      */
